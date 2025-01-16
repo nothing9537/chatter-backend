@@ -6,7 +6,7 @@ import * as Joi from 'joi';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DbModule } from './db/db.module';
+import { DbModule } from './common/db/db.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
