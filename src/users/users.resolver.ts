@@ -15,25 +15,25 @@ export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Mutation(() => User)
-  createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
+  public createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.usersService.create(createUserInput);
   }
 
   @Query(() => [User], { name: 'users' })
   @UseGuards(GqlAuthGuard)
-  findAll() {
+  public findAll() {
     return this.usersService.findAll();
   }
 
   @Query(() => User, { name: 'user' })
   @UseGuards(GqlAuthGuard)
-  findOne(@Args('_id') _id: string) {
+  public findOne(@Args('_id') _id: string) {
     return this.usersService.findOne(_id);
   }
 
   @Mutation(() => User)
   @UseGuards(GqlAuthGuard)
-  updateUser(
+  public updateUser(
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
     @CurrentUser() user: TokenPayload,
   ) {
@@ -42,7 +42,13 @@ export class UsersResolver {
 
   @Mutation(() => User)
   @UseGuards(GqlAuthGuard)
-  removeUser(@CurrentUser() user: TokenPayload) {
+  public removeUser(@CurrentUser() user: TokenPayload) {
     return this.usersService.remove(user._id);
+  }
+
+  @Query(() => User, { name: 'currentUser' })
+  @UseGuards(GqlAuthGuard)
+  public getCurrentUser(@CurrentUser() user: TokenPayload) {
+    return user;
   }
 }
