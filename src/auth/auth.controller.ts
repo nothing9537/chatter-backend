@@ -9,7 +9,7 @@ import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
@@ -21,7 +21,6 @@ export class AuthController {
   }
 
   @Post('logout')
-  @UseGuards(LocalAuthGuard)
   public async logout(@Res({ passthrough: true }) response: Response) {
     return this.authService.logout(response);
   }
