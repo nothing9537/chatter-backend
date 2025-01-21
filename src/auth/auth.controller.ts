@@ -19,4 +19,10 @@ export class AuthController {
   ) {
     return this.authService.login(user, response);
   }
+
+  @Post('logout')
+  @UseGuards(LocalAuthGuard)
+  public async logout(@Res({ passthrough: true }) response: Response) {
+    return this.authService.logout(response);
+  }
 }
