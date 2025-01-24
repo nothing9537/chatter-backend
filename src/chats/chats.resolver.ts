@@ -12,7 +12,7 @@ import { UpdateChatInput } from './dto/update-chat.input';
 
 @Resolver(() => Chat)
 export class ChatsResolver {
-  constructor(private readonly chatsService: ChatsService) { }
+  constructor(private readonly chatsService: ChatsService) {}
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Chat)

@@ -2,6 +2,7 @@ import { ObjectType, Field } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 import { AbstractEntity } from 'src/common/db/abstract.entity';
+import { Message } from '../messages/entities/message.entity';
 
 @ObjectType()
 @Schema()
@@ -21,6 +22,9 @@ export class Chat extends AbstractEntity {
   @Field(() => [String])
   @Prop([String])
   userIds: string[];
+
+  @Prop([Message])
+  messages: Message[];
 }
 
 export const ChatSchema = SchemaFactory.createForClass(Chat);
