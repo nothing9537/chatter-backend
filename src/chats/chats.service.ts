@@ -5,7 +5,7 @@ import { ChatsRepository } from './chats.repository';
 
 @Injectable()
 export class ChatsService {
-  constructor(private readonly chatsRepository: ChatsRepository) {}
+  constructor(private readonly chatsRepository: ChatsRepository) { }
 
   public async create(createChatInput: CreateChatInput, userId: string) {
     return this.chatsRepository.create({
@@ -15,12 +15,12 @@ export class ChatsService {
     });
   }
 
-  findAll() {
-    return `This action returns all chats`;
+  public async findAll() {
+    return this.chatsRepository.find({});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} chat`;
+  public async findOne(_id: string) {
+    return this.chatsRepository.findOne({ _id });
   }
 
   update(id: number, updateChatInput: UpdateChatInput) {
