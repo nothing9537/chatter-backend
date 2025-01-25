@@ -12,7 +12,7 @@ export class AuthService {
   constructor(
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
-  ) { }
+  ) {}
 
   public async login(user: User, response: Response) {
     const expires = new Date();

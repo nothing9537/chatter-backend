@@ -5,7 +5,7 @@ import { ChatsRepository } from './chats.repository';
 
 @Injectable()
 export class ChatsService {
-  constructor(private readonly chatsRepository: ChatsRepository) {}
+  constructor(private readonly chatsRepository: ChatsRepository) { }
 
   public async create(createChatInput: CreateChatInput, userId: string) {
     return this.chatsRepository.create({

@@ -13,6 +13,4 @@ export class ChatsRepository extends AbstractRepository<Chat> {
   constructor(@InjectModel(Chat.name) chatModel: Model<Chat>) {
     super(chatModel);
   }
-
-  
 }

@@ -16,4 +16,4 @@ import { MessagesModule } from './messages/messages.module';
   providers: [ChatsResolver, ChatsService, ChatsRepository],
   exports: [ChatsRepository],
 })
-export class ChatsModule { }
+export class ChatsModule {}

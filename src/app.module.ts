@@ -11,6 +11,7 @@ import { UsersModule } from './users/users.module';
 import { LoggerModule } from 'nestjs-pino';
 import { AuthModule } from './auth/auth.module';
 import { ChatsModule } from './chats/chats.module';
+import { PubSubModule } from './common/pubsub/pubsub.module';
 
 @Module({
   imports: [
@@ -23,6 +24,9 @@ import { ChatsModule } from './chats/chats.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      subscriptions: {
+        'graphql-ws': true,
+      },
     }),
     DbModule,
     UsersModule,
@@ -48,6 +52,7 @@ import { ChatsModule } from './chats/chats.module';
     }),
     AuthModule,
     ChatsModule,
+    PubSubModule,
   ],
   controllers: [AppController],
   providers: [AppService],
