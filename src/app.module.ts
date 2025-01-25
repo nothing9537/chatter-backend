@@ -1,17 +1,16 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DbModule } from './common/db/db.module';
 import { UsersModule } from './users/users.module';
-import { LoggerModule } from 'nestjs-pino';
 import { AuthModule } from './auth/auth.module';
 import { ChatsModule } from './chats/chats.module';
 import { PubSubModule } from './common/pubsub/pubsub.module';
+import { LoggerModule } from './common/logger/logger.module';
+import { GraphQLModule } from './common/graphql/graphql.module';
 
 @Module({
   imports: [
@@ -21,35 +20,10 @@ import { PubSubModule } from './common/pubsub/pubsub.module';
         MONGODB_URI: Joi.string().required(),
       }),
     }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: true,
-      subscriptions: {
-        'graphql-ws': true,
-      },
-    }),
+    GraphQLModule,
     DbModule,
     UsersModule,
-    LoggerModule.forRootAsync({
-      useFactory: (configService: ConfigService) => {
-        const isProduction = configService.get('NODE_ENV') === 'production';
-
-        return {
-          pinoHttp: {
-            transport: isProduction
-              ? undefined
-              : {
-                  target: 'pino-pretty',
-                  options: {
-                    singleLine: true,
-                  },
-                },
-            level: isProduction ? 'info' : 'debug',
-          },
-        };
-      },
-      inject: [ConfigService],
-    }),
+    LoggerModule,
     AuthModule,
     ChatsModule,
     PubSubModule,

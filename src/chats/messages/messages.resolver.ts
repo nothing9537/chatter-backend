@@ -11,7 +11,6 @@ import { CreateMessageInput } from './dto/create-message.input';
 import { MessagesService } from './messages.service';
 import { Message } from './entities/message.entity';
 import { GetMessagesArgs } from './dto/get-messages.args';
-import { MESSAGE_CREATED } from './constants/pubsub-triggers';
 import { MessageCreatedArgs } from './dto/message-created.args';
 
 @Resolver(() => Message)
@@ -40,12 +39,19 @@ export class MessagesResolver {
   }
 
   @Subscription(() => Message, {
-    filter: (payload, variables) => {
-      return payload.messageCreated.chatId === variables.chatId;
+    filter: (payload, variables, context) => {
+      const userId = context.req.user._id as string;
+
+      return (
+        payload.messageCreated.chatId === variables.chatId &&
+        userId !== payload.messageCreated.userId
+      );
     },
   })
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async messageCreated(@Args() _messageCreatedArgs: MessageCreatedArgs) {
-    return this.pubSub.asyncIterableIterator(MESSAGE_CREATED);
+  public async messageCreated(
+    @Args() messageCreatedArgs: MessageCreatedArgs,
+    @CurrentUser() user: TokenPayload,
+  ) {
+    return this.messagesService.messageCreated(messageCreatedArgs, user._id);
   }
 }
