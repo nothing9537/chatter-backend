@@ -13,7 +13,7 @@ import { MessageCreatedArgs } from './dto/message-created.args';
 
 @Resolver(() => Message)
 export class MessagesResolver {
-  constructor(private readonly messagesService: MessagesService) { }
+  constructor(private readonly messagesService: MessagesService) {}
 
   @Mutation(() => Message)
   @UseGuards(GqlAuthGuard)
@@ -33,17 +33,23 @@ export class MessagesResolver {
   }
 
   @Subscription(() => Message, {
-    filter: (payload, variables, context) => {
+    filter: (
+      payload: { messageCreated: Message },
+      variables: MessageCreatedArgs,
+      context,
+    ) => {
       const userId = context.req.user._id as string;
-      const message: Message = payload.messageCreated;
+      const { messageCreated: message } = payload;
 
       return (
-        message.chatId === variables.chatId &&
+        variables.chatIds.includes(message.chatId) &&
         userId !== message.user._id.toHexString()
       );
     },
   })
-  public async messageCreated(@Args() messageCreatedArgs: MessageCreatedArgs) {
-    return this.messagesService.messageCreated(messageCreatedArgs);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async messageCreated(@Args() _messageCreatedArgs: MessageCreatedArgs) {
+    return this.messagesService.messageCreated();
   }
 }

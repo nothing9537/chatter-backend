@@ -10,7 +10,6 @@ import { MessageDocument } from './entities/message.document';
 import { ChatsRepository } from '../chats.repository';
 import { GetMessagesArgs } from './dto/get-messages.args';
 import { MESSAGE_CREATED } from './constants/pubsub-triggers';
-import { MessageCreatedArgs } from './dto/message-created.args';
 import { Message } from './entities/message.entity';
 
 @Injectable()
@@ -75,11 +74,7 @@ export class MessagesService {
     ]);
   }
 
-  public async messageCreated({ chatId }: MessageCreatedArgs) {
-    await this.chatsRepository.findOne({
-      _id: chatId,
-    });
-
+  public async messageCreated() {
     return this.pubSub.asyncIterableIterator(MESSAGE_CREATED);
   }
 }
