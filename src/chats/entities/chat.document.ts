@@ -9,14 +9,8 @@ export class ChatDocument extends AbstractEntity {
   @Prop()
   userId: string;
 
-  // @Prop()
-  // isPrivate: boolean;
-
   @Prop()
   name: string;
-
-  // @Prop([String])
-  // userIds: string[];
 
   @Prop([MessageDocument])
   messages: MessageDocument[];

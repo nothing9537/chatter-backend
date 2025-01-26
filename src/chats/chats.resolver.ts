@@ -26,19 +26,24 @@ export class ChatsResolver {
   @UseGuards(GqlAuthGuard)
   @Query(() => [Chat], { name: 'chats' })
   public async findAll(): Promise<Chat[]> {
-    return this.chatsService.findMany();
+    const messages = await this.chatsService.findMany();
+
+    return messages;
   }
 
+  @UseGuards(GqlAuthGuard)
   @Query(() => Chat, { name: 'chat' })
   public async findOne(@Args('_id') _id: string): Promise<Chat> {
     return this.chatsService.findOne(_id);
   }
 
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => Chat)
   updateChat(@Args('updateChatInput') updateChatInput: UpdateChatInput) {
     return this.chatsService.update(updateChatInput.id, updateChatInput);
   }
 
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => Chat)
   removeChat(@Args('id', { type: () => Int }) id: number) {
     return this.chatsService.remove(id);
