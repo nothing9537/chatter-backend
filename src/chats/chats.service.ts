@@ -1,47 +1,71 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { CreateChatInput } from './dto/create-chat.input';
 import { UpdateChatInput } from './dto/update-chat.input';
 import { ChatsRepository } from './chats.repository';
+import { PipelineStage, Types } from 'mongoose';
 
 @Injectable()
 export class ChatsService {
   constructor(private readonly chatsRepository: ChatsRepository) { }
 
-  public userChatFilter(userId: string) {
-    return {
-      $or: [
-        { userId },
-        {
-          userIds: {
-            $in: [userId],
-          },
-        },
-        { isPrivate: false },
-      ],
-    };
-  }
-
   public async create(createChatInput: CreateChatInput, userId: string) {
     return this.chatsRepository.create({
       ...createChatInput,
       userId,
-      userIds: createChatInput?.userIds || [],
       messages: [],
     });
   }
 
-  public async findAll(userId: string) {
-    return this.chatsRepository.find({
-      ...this.userChatFilter(userId),
+  public async findMany(prePipelineStages: PipelineStage[] = []) {
+    // return this.chatsRepository.find({});
+    const chats = await this.chatsRepository.model.aggregate([
+      ...prePipelineStages,
+      { $set: { latestMessage: { $arrayElemAt: ['$messages', -1] } } },
+      { $unset: 'messages' },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'latestMessage.userId',
+          foreignField: '_id',
+          as: 'latestMessage.user',
+        },
+      },
+    ]);
+
+    chats.forEach((chat) => {
+      if (!chat.latestMessage?._id) {
+        delete chat.latestMessage;
+
+        return;
+      }
+
+      chat.latestMessage.user = chat.latestMessage.user[0];
+
+      delete chat.latestMessage.userId;
+
+      chat.latestMessage.chatId = chat._id;
     });
+
+    return chats;
   }
 
   public async findOne(_id: string) {
-    return this.chatsRepository.findOne({ _id });
+    const chats = await this.findMany([
+      { $match: { chatId: new Types.ObjectId(_id) } },
+    ]);
+
+    const chat = chats[0];
+
+    if (!chat) {
+      throw new NotFoundException(`No chat was found with ID ${_id}`);
+    }
+
+    return chat;
   }
 
-  update(id: number, updateChatInput: UpdateChatInput) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  update(id: number, _updateChatInput: UpdateChatInput) {
     return `This action updates a #${id} chat`;
   }
 

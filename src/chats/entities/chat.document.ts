@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 import { AbstractEntity } from 'src/common/db/abstract.entity';
 
-import { Message } from '../messages/entities/message.entity';
+import { MessageDocument } from '../messages/entities/message.document';
 
 @Schema()
 export class ChatDocument extends AbstractEntity {
@@ -13,13 +13,13 @@ export class ChatDocument extends AbstractEntity {
   // isPrivate: boolean;
 
   @Prop()
-  name?: string;
+  name: string;
 
   // @Prop([String])
   // userIds: string[];
 
-  @Prop([Message])
-  messages: Message[];
+  @Prop([MessageDocument])
+  messages: MessageDocument[];
 }
 
 export const ChatDocumentSchema = SchemaFactory.createForClass(ChatDocument);
