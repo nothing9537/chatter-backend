@@ -1,6 +1,7 @@
 import { PutObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
 import { FileUploadOptions } from './interfaces/file-upload.interface';
 
 @Injectable()
@@ -33,7 +34,7 @@ export class S3Service {
     );
   }
 
-  public async getObjectUrl(bucket: string, key: string) {
+  public getObjectUrl(bucket: string, key: string) {
     return `https://${bucket}.s3.amazonaws.com/${key}`;
   }
 }

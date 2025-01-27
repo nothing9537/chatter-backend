@@ -1,0 +1,18 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 22
+    commands:
+      - npm i pnpm -g
+  pre_build:
+    commands:
+      - pnpm i
+  build:
+    commands:
+      - pnpm build
+
+artifacts:
+  files:
+    - '**/*'

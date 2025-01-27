@@ -5,10 +5,11 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
+import { S3Service } from 'src/common/s3/s3.service';
+
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { UsersRepository } from './users.repository';
-import { S3Service } from 'src/common/s3/s3.service';
 import { USER_IMAGE_FILE_EXTENSION, USERS_BUCKET } from './constants';
 import { UserDocument } from './entities/user.document';
 import { User } from './entities/user.entity';
@@ -18,7 +19,7 @@ export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly s3Service: S3Service,
-  ) { }
+  ) {}
 
   private async hashPassword(password: string) {
     return bcrypt.hash(password, 10);
@@ -96,7 +97,10 @@ export class UsersService {
   public transformToUserEntity(userDocument: UserDocument): User {
     const temp = {
       ...userDocument,
-      imageUrl: this.getUserImage(userDocument._id.toHexString()),
+      imageUrl: this.s3Service.getObjectUrl(
+        USERS_BUCKET,
+        this.getUserImage(userDocument._id.toHexString()),
+      ),
     };
 
     delete temp.password;
