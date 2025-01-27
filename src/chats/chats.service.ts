@@ -86,7 +86,7 @@ export class ChatsService {
   }
 
   public async countChats() {
-    return this.chatsRepository.model.countDocuments({});
+    return await this.chatsRepository.model.countDocuments({});
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

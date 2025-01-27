@@ -4,16 +4,16 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { TokenPayload } from 'src/auth/token-payload.interface';
+import { PaginationArgs } from 'src/common/dto/pagination-args';
 
 import { Chat } from './entities/chat.entity';
 import { ChatsService } from './chats.service';
 import { CreateChatInput } from './dto/create-chat.input';
 import { UpdateChatInput } from './dto/update-chat.input';
-import { PaginationArgs } from 'src/common/dto/pagination-args';
 
 @Resolver(() => Chat)
 export class ChatsResolver {
-  constructor(private readonly chatsService: ChatsService) { }
+  constructor(private readonly chatsService: ChatsService) {}
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Chat)
@@ -29,9 +29,7 @@ export class ChatsResolver {
   public async findAll(
     @Args() paginationArgs: PaginationArgs,
   ): Promise<Chat[]> {
-    const messages = await this.chatsService.findMany([], paginationArgs);
-
-    return messages;
+    return this.chatsService.findMany([], paginationArgs);
   }
 
   @UseGuards(GqlAuthGuard)
