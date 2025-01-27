@@ -1,13 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PipelineStage, Types } from 'mongoose';
 
+import { PaginationArgs } from 'src/common/dto/pagination-args';
+
 import { CreateChatInput } from './dto/create-chat.input';
 import { UpdateChatInput } from './dto/update-chat.input';
 import { ChatsRepository } from './chats.repository';
 
 @Injectable()
 export class ChatsService {
-  constructor(private readonly chatsRepository: ChatsRepository) { }
+  constructor(private readonly chatsRepository: ChatsRepository) {}
 
   public async create(createChatInput: CreateChatInput, userId: string) {
     return this.chatsRepository.create({
@@ -17,10 +19,32 @@ export class ChatsService {
     });
   }
 
-  public async findMany(prePipelineStages: PipelineStage[] = []) {
+  public async findMany(
+    prePipelineStages: PipelineStage[] = [],
+    paginationArgs?: PaginationArgs,
+  ) {
+    const paginationPipelineStages: PipelineStage[] = paginationArgs
+      ? [
+          { $skip: paginationArgs?.skip || 0 },
+          { $limit: paginationArgs?.limit },
+        ]
+      : [];
+
     const chats = await this.chatsRepository.model.aggregate([
       ...prePipelineStages,
-      { $set: { latestMessage: { $arrayElemAt: ['$messages', -1] } } },
+      {
+        $set: {
+          latestMessage: {
+            $cond: [
+              '$messages',
+              { $arrayElemAt: ['$messages', -1] },
+              { createdAt: new Date() },
+            ],
+          },
+        },
+      },
+      { $sort: { 'latestMessage.createdAt': -1 } },
+      ...paginationPipelineStages,
       { $unset: 'messages' },
       {
         $lookup: {
@@ -59,6 +83,10 @@ export class ChatsService {
     }
 
     return chat;
+  }
+
+  public async countChats() {
+    return this.chatsRepository.model.countDocuments({});
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
