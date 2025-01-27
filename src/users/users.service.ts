@@ -19,7 +19,7 @@ export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly s3Service: S3Service,
-  ) {}
+  ) { }
 
   private async hashPassword(password: string) {
     return bcrypt.hash(password, 10);
