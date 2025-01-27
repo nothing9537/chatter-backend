@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PipelineStage, Types } from 'mongoose';
 
 import { PaginationArgs } from 'src/common/dto/pagination-args';
+import { UsersService } from 'src/users/users.service';
 
 import { CreateChatInput } from './dto/create-chat.input';
 import { UpdateChatInput } from './dto/update-chat.input';
@@ -9,7 +10,10 @@ import { ChatsRepository } from './chats.repository';
 
 @Injectable()
 export class ChatsService {
-  constructor(private readonly chatsRepository: ChatsRepository) {}
+  constructor(
+    private readonly chatsRepository: ChatsRepository,
+    private readonly usersService: UsersService,
+  ) {}
 
   public async create(createChatInput: CreateChatInput, userId: string) {
     return this.chatsRepository.create({
@@ -62,7 +66,9 @@ export class ChatsService {
         return;
       }
 
-      chat.latestMessage.user = chat.latestMessage.user[0];
+      chat.latestMessage.user = this.usersService.transformToUserEntity(
+        chat.latestMessage.user[0],
+      );
       delete chat.latestMessage.userId;
       delete chat.latestMessage.user.password;
       chat.latestMessage.chatId = chat._id;
