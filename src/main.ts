@@ -18,7 +18,7 @@ async function bootstrap() {
   app.use(cookieParser());
   app.enableCors({
     credentials: true,
-    origin: ['localhost:5173', configService.get('WEB_DOMAIN')],
+    origin: ['localhost:5173', `https://${configService.get('WEB_DOMAIN')}`],
   });
 
   await app.listen(+configService.getOrThrow('PORT'));
