@@ -11,16 +11,16 @@ async function bootstrap() {
     bufferLogs: true,
   });
 
+  const configService = app.get(ConfigService);
+
   app.useGlobalPipes(new ValidationPipe());
   app.useLogger(app.get(Logger));
   app.use(cookieParser());
   app.enableCors({
     credentials: true,
-    origin: ['localhost:5173', 'https://main.d2rmra5jincxb8.amplifyapp.com'],
+    origin: ['localhost:5173', configService.get('WEB_DOMAIN')],
   });
 
-  const configService = app.get(ConfigService);
-
-  await app.listen(configService.getOrThrow('PORT'));
+  await app.listen(+configService.getOrThrow('PORT'));
 }
 bootstrap();
