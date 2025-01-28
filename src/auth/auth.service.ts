@@ -49,15 +49,15 @@ export class AuthService {
     request: Request,
     connectionParams: Readonly<Record<string, unknown>> = {},
   ): TokenPayload {
-    const cookies: string[] = request.headers?.cookie.split('; ');
+    const cookies: string[] = request.headers?.cookie?.split?.('; ');
     const authCookie = cookies?.find?.((cookie) =>
       cookie.includes('Authentication'),
     );
 
-    const jwt = authCookie?.split?.('=')?.[1];
+    const jwt =
+      authCookie?.split?.('=')?.[1] ||
+      extractJwt(connectionParams?.token as string);
 
-    return this.jwtService.verify(
-      jwt || extractJwt(connectionParams?.token as string),
-    );
+    return this.jwtService.verify(jwt);
   }
 }

@@ -18,6 +18,9 @@ import { AuthService } from 'src/auth/auth.service';
             onConnect: (context) => {
               try {
                 const request = (context.extra as any).request as Request;
+
+                console.log(context.connectionParams);
+
                 const user = authService.verifyWs(
                   request,
                   context.connectionParams,
