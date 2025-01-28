@@ -30,7 +30,10 @@ export class AuthService {
 
     response.cookie('Authentication', token, {
       httpOnly: true,
+      domain: this.configService.get('WEB_DOMAIN'),
       expires,
+      secure: true,
+      sameSite: 'none',
     });
 
     return token;
