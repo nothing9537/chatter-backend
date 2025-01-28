@@ -16,7 +16,7 @@ async function bootstrap() {
   app.use(cookieParser());
   app.enableCors({
     credentials: true,
-    origin: ['localhost:5173', 'main.d2rmra5jincxb8.amplifyapp.com'],
+    origin: ['localhost:5173', 'https://main.d2rmra5jincxb8.amplifyapp.com'],
   });
 
   const configService = app.get(ConfigService);
