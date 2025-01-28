@@ -17,7 +17,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-strategy') {
             return request.cookies.Authentication;
           }
 
-          const authorization = request.headers.Authorization as string;
+          const authorization = (request.headers.Authorization ||
+            request.headers.authorization) as string;
 
           return extractJwt(authorization);
         },
