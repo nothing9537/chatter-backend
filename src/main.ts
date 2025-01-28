@@ -11,10 +11,7 @@ async function bootstrap() {
     bufferLogs: true,
   });
 
-  app.enableCors({
-    origin: ['http://localhost:5173'],
-    credentials: true,
-  });
+  app.enableCors({ credentials: true });
 
   app.useGlobalPipes(new ValidationPipe());
   app.useLogger(app.get(Logger));
