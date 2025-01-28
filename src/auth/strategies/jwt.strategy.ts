@@ -5,6 +5,7 @@ import { Request } from 'express';
 
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { TokenPayload } from '../token-payload.interface';
+import { extractJwt } from '../utils/extract-jwt';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-strategy') {
@@ -18,9 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-strategy') {
 
           const authorization = request.headers.Authorization as string;
 
-          if (authorization && authorization.startsWith('Bearer')) {
-            return authorization.substring(7, authorization.length);
-          }
+          return extractJwt(authorization);
         },
       ]),
       secretOrKey: configService.getOrThrow('JWT_SECRET'),

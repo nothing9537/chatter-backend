@@ -6,13 +6,14 @@ import { Request, Response } from 'express';
 import { User } from 'src/users/entities/user.entity';
 
 import { TokenPayload } from './token-payload.interface';
+import { extractJwt } from './utils/extract-jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
-  ) { }
+  ) {}
 
   public async login(user: User, response: Response) {
     const expires = new Date();
@@ -44,14 +45,19 @@ export class AuthService {
     return { success: true };
   }
 
-  public verifyWs(request: Request): TokenPayload {
-    const cookies: string[] = request.headers.cookie.split('; ');
-    const authCookie = cookies.find((cookie) =>
+  public verifyWs(
+    request: Request,
+    connectionParams: Readonly<Record<string, unknown>> = {},
+  ): TokenPayload {
+    const cookies: string[] = request.headers?.cookie.split('; ');
+    const authCookie = cookies?.find?.((cookie) =>
       cookie.includes('Authentication'),
     );
 
-    const jwt = authCookie.split('=')[1];
+    const jwt = authCookie?.split?.('=')?.[1];
 
-    return this.jwtService.verify(jwt);
+    return this.jwtService.verify(
+      jwt || extractJwt(connectionParams?.token as string),
+    );
   }
 }
